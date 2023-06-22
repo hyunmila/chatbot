@@ -31,31 +31,34 @@ label_encoder=LabelEncoder()
 label_encoder.fit(sample_labels)
 sample_labels=label_encoder.transform(sample_labels)
 
-# vectorize data, limit the vocab, turning text into space-separated sequences
-# of words, then split into list of tokens
-# oov-value of of token
-tokenizer=Tokenizer(num_words=1000,oov_token="<OOV>")
-tokenizer.fit_on_texts(sample_sentences)
-word_index=tokenizer.word_index
-sequences=tokenizer.texts_to_sequences(sample_sentences)
 
-# making all training text sequences into the same size
-padded_sequences=pad_sequences(sequences, truncating='post', maxlen=20)
+# oov replaces out of the vocabulary words with a special token
+tokenizer=Tokenizer(num_words=1000,oov_token="<OOV>") # create a vocabulary with limited words
+tokenizer.fit_on_texts(sample_sentences) # update vocabulary based on sentences
+word_index=tokenizer.word_index # words indexes in vocabulary
+sequences=tokenizer.texts_to_sequences(sample_sentences) # transform texts into sequences of integers
+
+# transform list of integers into a 2D numpy array (num_samples, num_timesteps)
+max_padding = 20 # max len of all sequences that others will be 'cut' to
+padded_sequences=pad_sequences(sequences, truncating='post', maxlen=max_padding)
 
 # neural network
 model=Sequential()
-model.add(Embedding(1000, 16, input_length=20))
-model.add(GlobalAveragePooling1D())
+max_input = 1000
+emb_dim = 16
+model.add(Embedding(max_input, emb_dim, input_length=max_padding)) # turn positive indexes into a dense vectors of fixed size
+model.add(GlobalAveragePooling1D()) # create fixed-length vector for each example by averaging on the sequence dim
+model.add(Dense(16, activation='relu')) # implement the activation operation on the input and give an output of length 16
 model.add(Dense(16, activation='relu'))
-model.add(Dense(16, activation='relu'))
-model.add(Dense(num_classes, activation='softmax'))
+model.add(Dense(num_classes, activation='softmax')) # output layer with a result of length of labels (categories)
 
-# stochastic gradient descent (adam)
+# stochastic gradient descent for large models (adam), loss function for more than two labels
 model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-model.summary()
+# model.summary()
 
 # training the model
-hist=model.fit(padded_sequences, np.array(sample_labels), epochs=500)
+num_epochs = 400
+hist=model.fit(padded_sequences, np.array(sample_labels), epochs=num_epochs)
 
 # save the model
 model.save("bot_model")
