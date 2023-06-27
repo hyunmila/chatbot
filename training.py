@@ -7,13 +7,15 @@ from tensorflow.keras.layers import Dense, Embedding, GlobalAveragePooling1D # t
 from tensorflow.keras.preprocessing.text import Tokenizer # type: ignore
 from tensorflow.keras.preprocessing.sequence import pad_sequences # type: ignore
 from sklearn.preprocessing import LabelEncoder
+from keras import callbacks
 
-with open('lessons.json') as file:
-    data=json.load(file)
-# with open('lessons.json') as read:
-#     dataread = json.load(read)
+
+
 
 def training():
+    with open('lessons.json') as file:
+        data=json.load(file)
+
     sample_sentences=[]
     sample_labels=[]
     labels=[]
@@ -26,13 +28,7 @@ def training():
         responses.append(sentence['responses'])
         if sentence['tag'] not in labels:
             labels.append(sentence['tag'])
-    # for sentence1 in dataread['lessons']:
-    #     for q1 in sentence1['questions']:
-    #         sample_sentences.append(q1)
-    #         sample_labels.append(sentence1['tag'])
-    #     responses.append(sentence1['responses'])
-    #     if sentence1['tag'] not in labels:
-    #         labels.append(sentence1['tag'])
+
 
 
     num_classes=len(labels)
@@ -68,11 +64,14 @@ def training():
     # model.summary()
 
     # training the model
-    num_epochs = 400
-    model.fit(padded_sequences, np.array(sample_labels), epochs=num_epochs)
+    es = callbacks.EarlyStopping(monitor="loss", mode="min", min_delta=0.05, verbose=2, patience=20, baseline=None, start_from_epoch=200)
+    mc =  callbacks.ModelCheckpoint('best_model.h5', monitor='loss', verbose=0, save_best_only=True)
+    num_epochs = 1000
+    model.fit(padded_sequences, np.array(sample_labels), epochs=num_epochs, verbose=1, callbacks=[es,mc])
+    # hist=model.fit(padded_sequences, np.array(sample_labels), epochs=num_epochs)
 
     # save the model
-    model.save("bot_model")
+    # model.save("bot_model")
 
     # save the tokenizer and encoder
     import pickle
@@ -81,4 +80,4 @@ def training():
     with open('label_encoder.pickle', 'wb') as enc:
         pickle.dump(label_encoder, enc, protocol=pickle.HIGHEST_PROTOCOL)
 
-training()
+# training()

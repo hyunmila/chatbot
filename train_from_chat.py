@@ -1,10 +1,13 @@
 import json
 from training import training
 
-with open('lessons.json') as read:
-        dataread = json.load(read)
+
 
 def learning_from_chat():
+    with open('lessons.json') as read:
+        dataread = json.load(read)
+
+
     elem_count=0
     for elem in dataread['lessons']:
         elem_count+=1
