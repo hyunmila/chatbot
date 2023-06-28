@@ -1,5 +1,6 @@
 import json
 import numpy as np
+import pickle
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras.models import Sequential # type: ignore
@@ -12,8 +13,8 @@ from keras import callbacks
 
 
 
-def training():
-    with open('lessons.json') as file:
+def training(mode):
+    with open('bot_module/lessons.json') as file:
         data=json.load(file)
 
     sample_sentences=[]
@@ -64,20 +65,19 @@ def training():
     # model.summary()
 
     # training the model
-    es = callbacks.EarlyStopping(monitor="loss", mode="min", min_delta=0.05, verbose=2, patience=20, baseline=None, start_from_epoch=200)
+    es = callbacks.EarlyStopping(monitor="loss", mode="min", min_delta=0.05, verbose=mode, patience=20, baseline=None, start_from_epoch=200)
     # mc =  callbacks.ModelCheckpoint('best_model.h5', monitor='loss', verbose=0, save_best_only=True)
     num_epochs = 500
-    model.fit(padded_sequences, np.array(sample_labels), epochs=num_epochs, verbose=1, callbacks=[es])
+    model.fit(padded_sequences, np.array(sample_labels), epochs=num_epochs, verbose=mode, callbacks=[es])
     # hist=model.fit(padded_sequences, np.array(sample_labels), epochs=num_epochs)
 
     # save the model
-    model.save("bot_model")
+    model.save("bot_module/bot_model")
 
     # save the tokenizer and encoder
-    import pickle
-    with open('tokenizer.pickle', 'wb') as token:
+    with open('bot_module/pickles/tokenizer.pickle', 'wb') as token:
         pickle.dump(tokenizer, token, protocol=pickle.HIGHEST_PROTOCOL)
-    with open('label_encoder.pickle', 'wb') as enc:
+    with open('bot_module/pickles/label_encoder.pickle', 'wb') as enc:
         pickle.dump(label_encoder, enc, protocol=pickle.HIGHEST_PROTOCOL)
 
-# training()
+# training(1)
