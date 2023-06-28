@@ -11,8 +11,6 @@ from sklearn.preprocessing import LabelEncoder
 from keras import callbacks
 
 
-
-
 def training(mode):
     with open('bot_module/lessons.json') as file:
         data=json.load(file)
@@ -29,7 +27,6 @@ def training(mode):
         responses.append(sentence['responses'])
         if sentence['tag'] not in labels:
             labels.append(sentence['tag'])
-
 
 
     num_classes=len(labels)
@@ -66,7 +63,7 @@ def training(mode):
 
     # training the model
     es = callbacks.EarlyStopping(monitor="loss", mode="min", min_delta=0.05, verbose=mode, patience=20, baseline=None, start_from_epoch=200)
-    # mc =  callbacks.ModelCheckpoint('best_model.h5', monitor='loss', verbose=0, save_best_only=True)
+    # mc =  callbacks.ModelCheckpoint('best_model.h5', monitor='loss', verbose=0, save_best_only=True) # this actually gives worse results
     num_epochs = 500
     model.fit(padded_sequences, np.array(sample_labels), epochs=num_epochs, verbose=mode, callbacks=[es])
     # hist=model.fit(padded_sequences, np.array(sample_labels), epochs=num_epochs)
@@ -79,5 +76,6 @@ def training(mode):
         pickle.dump(tokenizer, token, protocol=pickle.HIGHEST_PROTOCOL)
     with open('bot_module/pickles/label_encoder.pickle', 'wb') as enc:
         pickle.dump(label_encoder, enc, protocol=pickle.HIGHEST_PROTOCOL)
+    print("Training finished")
 
 # training(1)

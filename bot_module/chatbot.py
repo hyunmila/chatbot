@@ -6,17 +6,21 @@ import time
 from tensorflow.keras import models # type: ignore
 from tensorflow.keras import preprocessing # type: ignore
 
-
-def learning_from_chat():
+def lessons_length():
     with open('bot_module/lessons.json') as read:
         dataread = json.load(read)
 
     elem_count=0
     for elem in dataread['lessons']:
         elem_count+=1
+    return elem_count
 
+def learning_from_chat():
+    
+    elem_count = lessons_length()
     i=0
     j=1
+    print("First input saves as a question, second as an answer.")
     while True:
 
         if i%2==0:
