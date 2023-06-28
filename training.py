@@ -65,13 +65,13 @@ def training():
 
     # training the model
     es = callbacks.EarlyStopping(monitor="loss", mode="min", min_delta=0.05, verbose=2, patience=20, baseline=None, start_from_epoch=200)
-    mc =  callbacks.ModelCheckpoint('best_model.h5', monitor='loss', verbose=0, save_best_only=True)
-    num_epochs = 1000
-    model.fit(padded_sequences, np.array(sample_labels), epochs=num_epochs, verbose=1, callbacks=[es,mc])
+    # mc =  callbacks.ModelCheckpoint('best_model.h5', monitor='loss', verbose=0, save_best_only=True)
+    num_epochs = 500
+    model.fit(padded_sequences, np.array(sample_labels), epochs=num_epochs, verbose=1, callbacks=[es])
     # hist=model.fit(padded_sequences, np.array(sample_labels), epochs=num_epochs)
 
     # save the model
-    # model.save("bot_model")
+    model.save("bot_model")
 
     # save the tokenizer and encoder
     import pickle

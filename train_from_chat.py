@@ -37,6 +37,6 @@ def learning_from_chat():
             filedata["lessons"].append(data)
             file.seek(0)
             json.dump(filedata, file)
-    training()
+    
 # learning_from_chat()
 
