@@ -78,4 +78,4 @@ def training(mode):
         pickle.dump(label_encoder, enc, protocol=pickle.HIGHEST_PROTOCOL)
     print("Training finished")
 
-# training(1)
+training(1)

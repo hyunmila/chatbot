@@ -14,8 +14,9 @@ def main():
         if name.lower()=='s':
             name="User"+str(np.random.randint(100))
             print("Name: ", name)
-        userdata[username]=name
-    name=userdata[username]
+        userdata[username]=name 
+    else:
+        name=userdata[username] 
     if username.lower()!='s':
         yn = input("Do you want changes [y/n]: ")
         while yn.lower()=='y':
@@ -25,12 +26,21 @@ def main():
                 name=userdata[username]
             elif changes.lower()=='d':
                 todel = input("Username: ")
-                if (todel.lower()=='s' or todel==username):
+                if (todel.lower()=='s' or todel not in list(userdata.keys())):
                     print("Can't delete that one!")
+                elif todel==username:
+                    del userdata[todel]
+                    username='s'
+                    name=userdata[username]
+                    break
                 else:
                     del userdata[todel]
-            yn = input("Saved! Do you want more changes [y/n]: ")
-        print("Logged as: ", username, ": ", name)
+            elif changes.lower() not in ['c', 'd', 's']:
+                print("Invalid input")
+            else: 
+                break
+            yn = input("Do you want more changes [y/n]: ")
+        print("Logged as: ", name)
     i=0
     elem_count_old = lessons_length()
     temp = elem_count_old

@@ -20,16 +20,18 @@ def learning_from_chat():
     elem_count = lessons_length()
     i=0
     j=1
-    print("First input saves as a question, second as an answer.")
+    print("Entering learning mode...")
     while True:
 
         if i%2==0:
+            print("Bot: Ask me a question.")
             print("User: ", end="")
             inp1 = input()
             if inp1.lower()=="exit":
                 break
             i=i+1
         if i%2!=0:
+            print("Bot: What should I answer?")
             print("User: ", end="")
             inp2 = input()
             if inp2.lower()=="exit":
