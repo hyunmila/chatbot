@@ -1,7 +1,7 @@
 import time
 import shelve
 import numpy as np
-from bot_module.training import training
+from bot_module.training import start_training
 from bot_module.chatbot import chatbot, lessons_length
 
 
@@ -48,7 +48,7 @@ def main():
     while True:
         if i%2==0:
             if temp != elem_count_old: # train only if there are changes
-                training(mode)
+                start_training(mode)
             time.sleep(1)
             print("Main loaded")
             i+=1

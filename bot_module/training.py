@@ -11,7 +11,7 @@ from sklearn.preprocessing import LabelEncoder
 from keras import callbacks
 
 
-def training(mode):
+def training(mode, num_epochs):
     with open('bot_module/lessons.json') as file:
         data=json.load(file)
 
@@ -64,18 +64,35 @@ def training(mode):
     # training the model
     es = callbacks.EarlyStopping(monitor="loss", mode="min", min_delta=0.05, verbose=mode, patience=20, baseline=None, start_from_epoch=200)
     # mc =  callbacks.ModelCheckpoint('best_model.h5', monitor='loss', verbose=0, save_best_only=True) # this actually gives worse results
-    num_epochs = 500
+    # num_epochs = 500
     model.fit(padded_sequences, np.array(sample_labels), epochs=num_epochs, verbose=mode, callbacks=[es])
     # hist=model.fit(padded_sequences, np.array(sample_labels), epochs=num_epochs)
-
+    v=(es.stopped_epoch if es.stopped_epoch>0 else num_epochs)
     # save the model
-    model.save("bot_module/bot_model")
+    return v, model, tokenizer, label_encoder
 
-    # save the tokenizer and encoder
-    with open('bot_module/pickles/tokenizer.pickle', 'wb') as token:
-        pickle.dump(tokenizer, token, protocol=pickle.HIGHEST_PROTOCOL)
-    with open('bot_module/pickles/label_encoder.pickle', 'wb') as enc:
-        pickle.dump(label_encoder, enc, protocol=pickle.HIGHEST_PROTOCOL)
-    print("Training finished")
+def start_training(mode):
+    num=100
+    result=0
+    while num>=result:
+        result, model, tokenizer, label_encoder=training(mode, num)
+        if result!=num:
+            if mode==1:
+                print("Yummy! I ate ", result, " epochs <3")
+            model.save("bot_module/bot_model")
+            # save the tokenizer and encoder
+            with open('bot_module/pickles/tokenizer.pickle', 'wb') as token:
+                pickle.dump(tokenizer, token, protocol=pickle.HIGHEST_PROTOCOL)
+            with open('bot_module/pickles/label_encoder.pickle', 'wb') as enc:
+                pickle.dump(label_encoder, enc, protocol=pickle.HIGHEST_PROTOCOL)
+            print("Training finished")
+            break
+        else:
+            if mode==1:
+                print(result,": So hungry, need more epochs :(")
+            num+=100
 
-training(1)
+
+
+start_training(0) 
+
