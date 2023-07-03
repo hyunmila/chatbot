@@ -6,8 +6,8 @@ import time
 from tensorflow.keras import models # type: ignore
 from tensorflow.keras import preprocessing # type: ignore
 
-def lessons_length():
-    with open('bot_module/lessons.json') as read:
+def lessons_length(path):
+    with open(str(path)+'/lessons.json') as read:
         dataread = json.load(read)
 
     elem_count=0
@@ -15,9 +15,9 @@ def lessons_length():
         elem_count+=1
     return elem_count
 
-def learning_from_chat():
+def learning_from_chat(path):
     
-    elem_count = lessons_length()
+    elem_count = lessons_length(path)
     i=0
     j=1
     print("Entering learning mode...")
@@ -41,23 +41,23 @@ def learning_from_chat():
         
         data = {"tag":"lesson"+str(elem_count+j),"questions":[inp1],"responses":[inp2]}
         j=j+1
-        with open('bot_module/lessons.json','r+') as file:
+        with open(str(path)+'/lessons.json','r+') as file:
             filedata=json.load(file)
             filedata["lessons"].append(data)
             file.seek(0)
             json.dump(filedata, file)
 
-def chatbot(name):
+def chatbot(name,path):
 
-    with open('bot_module/lessons.json') as intenstfile:
+    with open(str(path)+'/lessons.json') as intenstfile:
         data=json.load(intenstfile)
 
-    model=models.load_model('bot_module/bot_model')
+    model=models.load_model(str(path)+'/training')
 
-    with open('bot_module/pickles/tokenizer.pickle', 'rb') as token:
+    with open(str(path)+'/pickles/tokenizer.pickle', 'rb') as token:
         tokenizer = pickle.load(token)
 
-    with open('bot_module/pickles/label_encoder.pickle', 'rb') as enc:
+    with open(str(path)+'/pickles/label_encoder.pickle', 'rb') as enc:
         label_encoder = pickle.load(enc)
 
     print("Chatbot loaded")
@@ -71,7 +71,7 @@ def chatbot(name):
             sys.exit("...Quitting...")
         if inp.lower()=="learning":
             time.sleep(1)
-            learning_from_chat()
+            learning_from_chat(path)
             break
 
         res = model.predict(preprocessing.sequence.pad_sequences(tokenizer.texts_to_sequences([inp]), truncating='post', maxlen=20), verbose=0) 

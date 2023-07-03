@@ -11,8 +11,8 @@ from sklearn.preprocessing import LabelEncoder
 from keras import callbacks
 
 
-def training(mode, num_epochs):
-    with open('bot_module/lessons.json') as file:
+def training(mode, num_epochs, path):
+    with open(str(path)+'/lessons.json') as file:
         data=json.load(file)
 
     sample_sentences=[]
@@ -71,26 +71,28 @@ def training(mode, num_epochs):
     # save the model
     return v, model, tokenizer, label_encoder
 
-def start_training(mode):
-    num=100
+def start_training(mode, path, num):
+    # num=100
     result=0
     while num>=result:
-        result, model, tokenizer, label_encoder=training(mode, num)
+        result, model, tokenizer, label_encoder=training(mode, num, path)
         if result!=num:
             if mode==1:
                 print("Yummy! I ate ", result, " epochs <3")
-            model.save("bot_module/bot_model")
+            model.save(str(path)+"/training")
             # save the tokenizer and encoder
-            with open('bot_module/pickles/tokenizer.pickle', 'wb') as token:
+            with open(str(path)+'/pickles/tokenizer.pickle', 'wb') as token:
                 pickle.dump(tokenizer, token, protocol=pickle.HIGHEST_PROTOCOL)
-            with open('bot_module/pickles/label_encoder.pickle', 'wb') as enc:
+            with open(str(path)+'/pickles/label_encoder.pickle', 'wb') as enc:
                 pickle.dump(label_encoder, enc, protocol=pickle.HIGHEST_PROTOCOL)
             print("Training finished")
+            epoch_upd=num
             break
         else:
             if mode==1:
                 print(result,": So hungry, need more epochs :(")
             num+=100
+    return epoch_upd
 
 
 
