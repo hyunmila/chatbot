@@ -6,8 +6,9 @@ from bot_module.chatbot import chatbot, lessons_length
 
 
 def main():
-    userdata = shelve.open("userdata/userdata")
     mode = 0 # 1 for debug, 0 for user
+
+    userdata = shelve.open("userdata/userdata")
     username = input("Enter your username or 's' to skip: ")
     if (username not in list(userdata.keys())):
         name=input("Enter your name or 's' to skip: ")

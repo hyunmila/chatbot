@@ -1,2 +1,3 @@
 bot_module/bot_model/
 bot_module/pickles/
+bot_module/__pycache__/

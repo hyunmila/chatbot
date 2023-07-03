@@ -94,5 +94,5 @@ def start_training(mode):
 
 
 
-start_training(0) 
+# start_training(0) 
 
