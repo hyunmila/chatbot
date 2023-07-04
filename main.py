@@ -2,15 +2,18 @@ import time
 import shelve
 import shutil
 import os
+import warnings
 import numpy as np
 from bot_module.training import start_training
 from bot_module.chatbot import chatbot, lessons_length
-
+import absl.logging
+absl.logging.set_verbosity(absl.logging.ERROR)
 
 def main():
-    mode = 1 # 1 for debug, 0 for user
+    # 1 for debug, 0 for user
+    mode = 0
 
-    is_new=False
+    is_new=False # new user training
     usernames=shelve.open("bot_module/database/userdata/usernames")
     userdata=shelve.open("bot_module/database/userdata/userdata")
     # check if database is full, if not delete additional entries
@@ -19,7 +22,7 @@ def main():
     lengths=[len(list(usernames.keys())), len(list(userdata.keys())), len(db_list)]
     is_not_equal = (lengths[0]!=lengths[1] or lengths[0]!=lengths[2]) # True if not equal
     while is_not_equal:
-        print("Database error")
+        warnings.warn("Database error", category=Warning)
         count=lengths.count(max(lengths))
         id=lengths.index(max(lengths))
         match id:
@@ -39,7 +42,10 @@ def main():
                 for elem in db_list:
                     if (elem not in list(userdata.keys())) or (elem not in list(usernames.keys())):
                         print("Deleting ",elem," from database")
-                        shutil.rmtree('bot_module/database/'+str(elem))
+                        try:
+                            shutil.rmtree('bot_module/database/'+str(elem))
+                        except NotADirectoryError:
+                            os.remove('bot_module/database/'+str(elem))
                         db_list=os.listdir(path='bot_module/database')
                         db_list.remove('userdata')
                         lengths[2]=len(db_list)
@@ -101,7 +107,7 @@ def main():
     i=0
     elem_count_old = lessons_length(path)
     temp = elem_count_old
-    print(temp)
+    if mode==1:print(temp)
     
     while True:
         if i%2==0:
@@ -112,10 +118,10 @@ def main():
             print("Main loaded")
             i+=1
         if i%2!=0:
-            chatbot(name,path)
+            chatbot(name,path,mode)
             elem_count_new = lessons_length(path)
             temp=elem_count_new
-            print(temp)
+            if mode==1:print(temp)
             i+=1
 
 

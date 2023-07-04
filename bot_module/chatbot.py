@@ -16,7 +16,6 @@ def lessons_length(path):
     return elem_count
 
 def learning_from_chat(path):
-    
     elem_count = lessons_length(path)
     i=0
     j=1
@@ -38,7 +37,6 @@ def learning_from_chat(path):
                 break
             i=i+1
         
-        
         data = {"tag":"lesson"+str(elem_count+j),"questions":[inp1],"responses":[inp2]}
         j=j+1
         with open(str(path)+'/lessons.json','r+') as file:
@@ -47,16 +45,12 @@ def learning_from_chat(path):
             file.seek(0)
             json.dump(filedata, file)
 
-def chatbot(name,path):
-
+def chatbot(name,path,mode):
     with open(str(path)+'/lessons.json') as intenstfile:
         data=json.load(intenstfile)
-
     model=models.load_model(str(path)+'/training')
-
     with open(str(path)+'/pickles/tokenizer.pickle', 'rb') as token:
         tokenizer = pickle.load(token)
-
     with open(str(path)+'/pickles/label_encoder.pickle', 'rb') as enc:
         label_encoder = pickle.load(enc)
 
@@ -75,13 +69,11 @@ def chatbot(name,path):
             break
 
         res = model.predict(preprocessing.sequence.pad_sequences(tokenizer.texts_to_sequences([inp]), truncating='post', maxlen=20), verbose=0)[0]
-        print(res, len(res))
         res_index=np.argmax(res)
-        print(res_index)
-        
         tag = label_encoder.inverse_transform([np.argmax(res)])
-        print(tag)
-        if res[res_index]>0.3:
+        if mode==1:print(res, len(res), res_index, tag)
+        
+        if res[res_index]>0.3: # TODO: calculate the threshold
             for i in data['lessons']:
                 if i['tag']==tag:
                     print("Bot: ", np.random.choice(i['responses']))
