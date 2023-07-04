@@ -74,9 +74,16 @@ def chatbot(name,path):
             learning_from_chat(path)
             break
 
-        res = model.predict(preprocessing.sequence.pad_sequences(tokenizer.texts_to_sequences([inp]), truncating='post', maxlen=20), verbose=0) 
+        res = model.predict(preprocessing.sequence.pad_sequences(tokenizer.texts_to_sequences([inp]), truncating='post', maxlen=20), verbose=0)[0]
+        print(res, len(res))
+        res_index=np.argmax(res)
+        print(res_index)
+        
         tag = label_encoder.inverse_transform([np.argmax(res)])
-
-        for i in data['lessons']:
-            if i['tag']==tag:
-                print("Bot: ", np.random.choice(i['responses']))
+        print(tag)
+        if res[res_index]>0.3:
+            for i in data['lessons']:
+                if i['tag']==tag:
+                    print("Bot: ", np.random.choice(i['responses']))
+        else:
+            print("I don't understand, ask me something else")

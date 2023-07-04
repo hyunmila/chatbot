@@ -101,6 +101,7 @@ def main():
     i=0
     elem_count_old = lessons_length(path)
     temp = elem_count_old
+    print(temp)
     
     while True:
         if i%2==0:
@@ -114,6 +115,7 @@ def main():
             chatbot(name,path)
             elem_count_new = lessons_length(path)
             temp=elem_count_new
+            print(temp)
             i+=1
 
 
