@@ -28,14 +28,17 @@ def training(mode, num_epochs, path):
         if sentence['tag'] not in labels:
             labels.append(sentence['tag'])
 
-
     num_classes=len(labels)
+    dict_keys = list(dict.fromkeys(sample_labels))
 
     # conversion into model understandable form
     label_encoder=LabelEncoder()
     label_encoder.fit(sample_labels)
     sample_labels=label_encoder.transform(sample_labels)
-
+    
+    dictoflabels={}
+    for elem in dict_keys:
+        dictoflabels[elem]=dict_keys.index(elem)
 
     # oov replaces out of the vocabulary words with a special token
     tokenizer=Tokenizer(num_words=1000,oov_token="<OOV>") # create a vocabulary with limited words
@@ -49,7 +52,7 @@ def training(mode, num_epochs, path):
 
     # neural network
     model=Sequential()
-    max_input = 1000
+    max_input = 1000 # hardcoded num
     emb_dim = 16
     model.add(Embedding(max_input, emb_dim, input_length=max_padding)) # turn positive indexes into a dense vectors of fixed size
     model.add(GlobalAveragePooling1D()) # create fixed-length vector for each example by averaging on the sequence dim
@@ -69,13 +72,13 @@ def training(mode, num_epochs, path):
     # hist=model.fit(padded_sequences, np.array(sample_labels), epochs=num_epochs)
     v=(es.stopped_epoch if es.stopped_epoch>0 else num_epochs)
     # save the model
-    return v, model, tokenizer, label_encoder
+    return v, model, tokenizer, label_encoder, dictoflabels
 
 def start_training(mode, path, num):
     # num=100
     result=0
     while num>=result:
-        result, model, tokenizer, label_encoder=training(mode, num, path)
+        result, model, tokenizer, label_encoder, dictoflabels=training(mode, num, path)
         if result!=num:
             if mode==1:
                 print("Yummy! I ate ", result, " epochs <3")
@@ -92,9 +95,9 @@ def start_training(mode, path, num):
             if mode==1:
                 print(result,": So hungry, need more epochs :(")
             num+=100
-    return epoch_upd
+    return epoch_upd, dictoflabels
 
 
 
-# start_training(0) 
+# start_training(mode=0,path='bot_module/database/user',num=500) 
 
