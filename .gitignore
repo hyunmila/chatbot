@@ -1,4 +1,4 @@
 bot_module/__pycache__/
 bot_module/*.ipynb
 test.py
-bot_module/database/bot
+bot_module/database/

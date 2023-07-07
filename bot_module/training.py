@@ -29,7 +29,7 @@ def training(mode, num_epochs, path):
             labels.append(sentence['tag'])
 
     num_classes=len(labels)
-    dict_keys = list(dict.fromkeys(sample_labels))
+    dict_keys = list(dict.fromkeys(sample_labels)) # TODO NOT LIKE THIS, THIS IS DUMB!
 
     # conversion into model understandable form
     label_encoder=LabelEncoder()
