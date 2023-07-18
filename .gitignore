@@ -1,4 +1,7 @@
+__pycache__/
 bot_module/__pycache__/
-bot_module/*.ipynb
-test.py
+*.ipynb
+bot_module/test.py
 bot_module/database/
+transformers_bot/model/
+data.json

@@ -103,7 +103,7 @@ def chatbot(name,path,mode,dictoflabels,username):
                         print("Invalid input, choose one from provided!")
                         tagtd=input("Which lesson you want to reload?: ")
                         todel=dictoflabels[tagtd]
-                    print("todel= ", todel)
+                    # print("todel= ", todel)
                     if todel<6:
                         print("Can't delete that one!")
                         break
@@ -113,6 +113,6 @@ def chatbot(name,path,mode,dictoflabels,username):
                         json.dump(data, file)
                     elem_count = lessons_length(path)
                     if mode==1:print(elem_count)
-                    append_to_json(j=3,elem_count=elem_count,inp1=inp1,inp2=inp2,path=path) # j=3 because: num_elems+appended+j=1+1 to be greater than last tag name
-                    break
+            append_to_json(j=3,elem_count=elem_count,inp1=inp1,inp2=inp2,path=path) # j=3 because: num_elems+appended+j=1+1 to be greater than last tag name
+            break
             
