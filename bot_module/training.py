@@ -33,7 +33,7 @@ def training(mode, num_epochs, path):
     label_encoder=LabelEncoder()
     label_encoder.fit(sample_labels)
     sample_labels=label_encoder.transform(sample_labels)
-    print(sample_labels.shape, type(sample_labels))
+    # print(sample_labels.shape, type(sample_labels))
 
     # oov replaces out of the vocabulary words with a special token
     tokenizer=Tokenizer(num_words=1000,oov_token="<OOV>") # create a vocabulary with limited words
@@ -45,7 +45,7 @@ def training(mode, num_epochs, path):
     max_padding = 20 # max len of all sequences that others will be 'cut' to
     padded_sequences=pad_sequences(sequences, truncating='post', maxlen=max_padding)
     # padded_sequences=pad_sequences(sequences, truncating='post')
-    print(padded_sequences.shape, type(padded_sequences))
+    # print(padded_sequences.shape, type(padded_sequences))
 
     # neural network
     model=Sequential()
@@ -78,7 +78,7 @@ def start_training(mode, path, num):
         result, model, tokenizer, label_encoder=training(mode, num, path)
         if result!=num:
             if mode==1:
-                print("Yummy! I ate ", result, " epochs <3")
+                print("Yummy! I ate ", result, " epochs!")
             model.save(str(path)+"/training")
             # save the tokenizer and encoder
             with open(str(path)+'/pickles/tokenizer.pickle', 'wb') as token:
@@ -90,11 +90,11 @@ def start_training(mode, path, num):
             break
         else:
             if mode==1:
-                print(result,": So hungry, need more epochs :(")
+                print(result,": Need more epochs :(")
             num+=100
     return epoch_upd
 
 
 
-start_training(mode=0,path='bot_module/database/user',num=500) 
+# start_training(mode=0,path='bot_module/database/user',num=500) 
 

@@ -1,0 +1,37 @@
+{"data":[
+        {
+            "train":[
+                {
+                    "dialog":[
+                        "But what about second breakfast?",
+                        "Don't think he knows about second breakfast, Pip.",
+                        "What about elevensies?"]
+                },
+                {
+                    "dialog":[
+                        "I didn't think it would end this way!",
+                        "End? No, the journey doesn't end here.",
+                        "Well it isn't so bad."]
+                }
+            ]
+        },
+        {
+            "validate":[
+                {
+                    "dialog":[
+                        "It's a Dangerous Business, Frodo, Going Out Your Door.",
+                        "Remember what Bilbo used to say.",
+                        "There's no knowing where they might be swept off to."
+                    ]
+                },
+                {
+                    "dialog":[
+                        "I never thought I would die fighting side by side with an Elf.",
+                        "What about side by side with a friend?",
+                        "That will do."
+                    ]
+                }
+            ]
+        }
+    ]
+}

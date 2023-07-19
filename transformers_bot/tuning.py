@@ -3,51 +3,29 @@ import tensorflow as tf
 import numpy as np
 import datasets
 import math
+import json
 import pandas as pd
 from transformers import AutoTokenizer, TFAutoModelForCausalLM, AdamWeightDecay
 from tensorflow.keras.preprocessing.sequence import pad_sequences # type: ignore
-
+from paths import path_pre, path_tun
 transformers.logging.set_verbosity_error()
 
-model_pre="C:/Users/kamilak/Documents/VSC/transformers/DialoGPT-medium"
+# model used here: DialoGPT-medium
+# clone with git clone https://huggingface.co/microsoft/DialoGPT-medium
+# if you have a problem with cloning the repo, use "git config http.sslVerify false" and "git config http.sslVerify true" after downloading
+model_pre=path_pre() # path to a dir with pretrained model; ex: ".../VSC/transformers/DialoGPT-medium"
+
+model_tun=path_tun() # path to a dir where fine-tuned model is saved; ex: ".../VSC/chatbot/transformers_bot/model"
+
 tokenizer=AutoTokenizer.from_pretrained(model_pre)
 tokenizer.pad_token=tokenizer.eos_token
 model=TFAutoModelForCausalLM.from_pretrained(model_pre)
 
-train=[
-    {
-        'label':0,
-        'dialog':[
-            "But what about second breakfast?",
-            "Don't think he knows about second breakfast, Pip.",
-            "What about elevensies?"]
-    },
-    {
-        'label':1,
-        'dialog':[
-            "I didn't think it would end this way",
-            "End? No, the journey doesn't end here.",
-            "Well it isn't so bad"]
-    }
-]
-validate=[
-    {
-        'label':0,
-        'dialog':[
-            "It's a Dangerous Business, Frodo, Going Out Your Door.",
-            "Remember what Bilbo used to say",
-            "There's no knowing where they might be swept off to."
-        ]
-    },
-    {
-        'label':1,
-        'dialog':[
-            "I never thought I would die fighting side by side with an Elf.",
-            "What about side by side with a friend?",
-            "That will do."
-        ]
-    }
-]
+with open('transformers_bot/data.json') as file:
+    data=json.load(file)
+
+train=data['data'][0]['train']
+validate=data['data'][1]['validate']
 
 train=datasets.Dataset.from_pandas(pd.DataFrame(data=train))
 validate=datasets.Dataset.from_pandas(pd.DataFrame(data=validate))
@@ -60,11 +38,27 @@ def concatenate_utterances(example):
 dataset=dataset.map(concatenate_utterances)
 
 def encode(examples):
-    encoded = tokenizer(examples['dialog'], truncation=True, padding=True, max_length=26)
+    if i==0:
+        encoded = tokenizer(examples['dialog'], truncation=True, padding=True)
+    elif i==1:
+        encoded = tokenizer(examples['dialog'], truncation=True, padding='max_length', max_length=max_len)
     encoded['labels'] = encoded['input_ids'][:]
     return encoded
 
-encoded_dataset = dataset.map(encode, batched=True, remove_columns=['dialog'])
+def id_len(examples):
+    max_len.append(len(examples['input_ids']))
+
+max_len=40 
+i=0
+while True:
+    check_len=max_len
+    encoded_dataset = dataset.map(encode, batched=True, remove_columns=['dialog'])
+    max_len=[]
+    encoded_dataset.map(id_len)
+    max_len=min(max_len)
+    if check_len==max_len:break
+    i+=1
+
 
 optimizer=AdamWeightDecay(learning_rate=2e-5, weight_decay_rate=0.01)
 model.compile(optimizer=optimizer)
@@ -73,22 +67,12 @@ tv=np.array(encoded_dataset['train']['labels'])
 lv=np.array(encoded_dataset['validate']['labels'])
 labels=np.array(tf.cast(tv, dtype=tf.int32))
 eval_labels=np.array(tf.cast(lv, dtype=tf.int32))
-tf_train_dataset=pad_sequences(encoded_dataset['train']['input_ids'], truncating='post', maxlen=26)
-eval_dataset=pad_sequences(encoded_dataset['validate']['input_ids'], truncating='post', maxlen=26)
+tf_train_dataset=pad_sequences(encoded_dataset['train']['input_ids'], truncating='post', maxlen=max_len)
+eval_dataset=pad_sequences(encoded_dataset['validate']['input_ids'], truncating='post', maxlen=max_len)
 tf_eval_dataset=(eval_dataset, eval_labels)
 
-model.fit(tf_train_dataset, labels, validation_data=tf_eval_dataset, epochs=10)
-model.save_pretrained("C:/Users/kamilak/Documents/VSC/chatbot/transformers_bot/model")
+model.fit(tf_train_dataset, labels, validation_data=tf_eval_dataset, epochs=1)
+model.save_pretrained(model_tun)
 eval_loss = model.evaluate(eval_dataset, eval_labels)
 
 print(f"Perplexity: {math.exp(eval_loss):.2f}")
-
-model=TFAutoModelForCausalLM.from_pretrained("C:/Users/kamilak/Documents/VSC/chatbot/transformers_bot/model")
-
-test_sentence="But what about second breakfast?"
-tokenized = tokenizer(test_sentence, return_tensors="np")
-
-outputs = model.generate(**tokenized, max_length=26)
-
-print(outputs)
-print(tokenizer.decode(outputs[0]))

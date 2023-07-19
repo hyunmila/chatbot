@@ -1,7 +1,7 @@
 __pycache__/
 bot_module/__pycache__/
 *.ipynb
-bot_module/test.py
+test.py
 bot_module/database/
 transformers_bot/model/
-data.json
+paths.py
