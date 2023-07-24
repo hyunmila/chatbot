@@ -96,5 +96,5 @@ def start_training(mode, path, num):
 
 
 
-# start_training(mode=0,path='bot_module/database/user',num=500) 
+# start_training(mode=0,path='classification_training/database/user',num=500) 
 

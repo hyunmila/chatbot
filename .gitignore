@@ -1,7 +1,7 @@
 __pycache__/
-bot_module/__pycache__/
+classification_training/__pycache__/
 *.ipynb
 test.py
-bot_module/database/
-transformers_bot/model/
+classification_training/database/
+transformers_training/model/
 paths.py

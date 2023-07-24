@@ -95,7 +95,7 @@ def chatbot(name,path,mode,dictoflabels,username):
                 tagtd=input("Which lesson you want to reload?: ")
                 yn=input(f"Reload : {tagtd}, question: {inp1} ?[y/n] ")
                 if yn.lower()=='y':
-                    userdb=shelve.open("bot_module/database/userdata/userdb")
+                    userdb=shelve.open("classification_training/database/userdata/userdb")
                     dictoflabels=userdb[username]
                     try:
                         todel=dictoflabels[tagtd]

@@ -17,14 +17,14 @@ if you have a problem with cloning the repo, use "git config http.sslVerify fals
 path to a dir with pretrained model; ex: '.../VSC/transformers/DialoGPT-medium'
 """
 model_pre=path_pre() 
-"""path to a dir where fine-tuned model is saved; ex: '.../VSC/chatbot/transformers_bot/model'"""
+"""path to a dir where fine-tuned model is saved; ex: '.../VSC/chatbot/transformers_training/model'"""
 model_tun=path_tun() 
 
 tokenizer=AutoTokenizer.from_pretrained(model_pre)
 tokenizer.pad_token=tokenizer.eos_token
 model=TFAutoModelForCausalLM.from_pretrained(model_pre)
 
-with open('transformers_bot/data.json') as file:
+with open('transformers_training/data.json') as file:
     data=json.load(file)
 
 train=data['data'][0]['train']

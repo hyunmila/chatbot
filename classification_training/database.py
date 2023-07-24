@@ -7,10 +7,10 @@ import json
 class User:
     def __init__(self, username):
         self.username=username
-        self.path='bot_module/database/'+str(self.username)
-        self.usernames=shelve.open("bot_module/database/userdata/usernames")
-        self.userdata=shelve.open("bot_module/database/userdata/userdata")
-        self.userdb=shelve.open("bot_module/database/userdata/userdb")
+        self.path='classification_training/database/'+str(self.username)
+        self.usernames=shelve.open("classification_training/database/userdata/usernames")
+        self.userdata=shelve.open("classification_training/database/userdata/userdata")
+        self.userdb=shelve.open("classification_training/database/userdata/userdb")
     
     def database(self):
         with open(str(self.path)+'/lessons.json') as lessons:
@@ -32,7 +32,7 @@ class User:
                 self.name="User"+str(np.random.randint(100)) # hardcoded num
                 print("Name: ", self.name)
             self.usernames[self.username]=self.name
-            source_dir='bot_module/database/user' 
+            source_dir='classification_training/database/user' 
             destination_dir=self.path
             shutil.copytree(source_dir,destination_dir)
             self.userdata[self.username]=100
@@ -58,7 +58,7 @@ class User:
         for elem in ([self.usernames, self.userdata, self.userdb]):
             # print("Deleting: ", elem[todel])
             del elem[todel]
-        shutil.rmtree('bot_module/database/'+str(todel))
+        shutil.rmtree('classification_training/database/'+str(todel))
 
     def del_name(self):
         todel = input("Username: ")
@@ -82,10 +82,10 @@ class User:
 
 class Database:
     def __init__(self):
-        self.usernames=shelve.open("bot_module/database/userdata/usernames")
-        self.userdata=shelve.open("bot_module/database/userdata/userdata")
-        self.userdb=shelve.open("bot_module/database/userdata/userdb")
-        self.db_list=os.listdir(path='bot_module/database')
+        self.usernames=shelve.open("classification_training/database/userdata/usernames")
+        self.userdata=shelve.open("classification_training/database/userdata/userdata")
+        self.userdb=shelve.open("classification_training/database/userdata/userdb")
+        self.db_list=os.listdir(path='classification_training/database')
         self.db_list.remove('userdata')
         self.keys_list=[list(self.usernames.keys()), list(self.userdata.keys()),
                         list(self.userdb.keys()), self.db_list]
@@ -103,9 +103,9 @@ class Database:
                     (elem not in self.keys_list[2])):
                     print("Deleting ",elem," from database")
                     try:
-                        shutil.rmtree('bot_module/database/'+str(elem))
+                        shutil.rmtree('classification_training/database/'+str(elem))
                     except NotADirectoryError:
-                        os.remove('bot_module/database/'+str(elem))
+                        os.remove('classification_training/database/'+str(elem))
                     self.db_list.remove(elem)
                     lengths[id]=len(self.db_list)
         else:

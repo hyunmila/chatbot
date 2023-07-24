@@ -5,10 +5,13 @@ import numpy as np
 from paths import path_intent
 transformers.logging.set_verbosity_error()
 
-# model used here: distilbert-base-uncased-finetuned-sst-2-english
-# clone with git clone https://huggingface.co/distilbert-base-uncased-finetuned-sst-2-english
-# if you have a problem with cloning the repo, use "git config http.sslVerify false" and "git config http.sslVerify true" after downloading
-checkpoint=path_intent() # path to a dir with pretrained model; ex: ".../VSC/transformers/distilbert-base-uncased-finetuned-sst-2-english"
+"""
+model used here: distilbert-base-uncased-finetuned-sst-2-english
+clone with git clone https://huggingface.co/distilbert-base-uncased-finetuned-sst-2-english
+if you have a problem with cloning the repo, use "git config http.sslVerify false" and "git config http.sslVerify true" after downloading
+path to a dir with pretrained model; ex: '.../VSC/transformers/distilbert-base-uncased-finetuned-sst-2-english'
+"""
+checkpoint=path_intent()
 
 tokenizer = AutoTokenizer.from_pretrained(checkpoint)
 raw_inputs = [
