@@ -71,11 +71,11 @@ while True:
         break
     generator = partial(generate, model=model, tokenizer=tokenizer)
     
-    print("\n0: Bot: ",generator(inp)[0])
+    # print("\n0: Bot: ",generator(inp)[0])
     print("1: Bot: ",generator(inp, num_beams=10, early_stopping=True, num_return_sequences=5,no_repeat_ngram_size=2)[0])
     print("2: Bot: ",generator(inp, do_sample=True, top_k=0, temperature=0.7)[0])
     print("3: Bot: ",generator(inp, do_sample=True, top_k=50)[0])
-    print("4: Bot: ",generator(inp, do_sample=True, top_k=0, top_p=0.9)[0])
+    # print("4: Bot: ",generator(inp, do_sample=True, top_k=0, top_p=0.9)[0])
     choice=input("Which response fits your question best? [0,1,2,3,4]: ")
     choices.append(choice)
 
@@ -99,4 +99,3 @@ A bit about the model.generate function:
         Then calculates the highest probability for every sentence
         and chooses the one with the highest score.
 """
-

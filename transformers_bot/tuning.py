@@ -10,12 +10,15 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences # type: ignore
 from paths import path_pre, path_tun
 transformers.logging.set_verbosity_error()
 
-# model used here: DialoGPT-medium
-# clone with git clone https://huggingface.co/microsoft/DialoGPT-medium
-# if you have a problem with cloning the repo, use "git config http.sslVerify false" and "git config http.sslVerify true" after downloading
-model_pre=path_pre() # path to a dir with pretrained model; ex: ".../VSC/transformers/DialoGPT-medium"
-
-model_tun=path_tun() # path to a dir where fine-tuned model is saved; ex: ".../VSC/chatbot/transformers_bot/model"
+"""
+model used here: DialoGPT-medium
+clone with git clone https://huggingface.co/microsoft/DialoGPT-medium
+if you have a problem with cloning the repo, use "git config http.sslVerify false" and "git config http.sslVerify true" after downloading
+path to a dir with pretrained model; ex: '.../VSC/transformers/DialoGPT-medium'
+"""
+model_pre=path_pre() 
+"""path to a dir where fine-tuned model is saved; ex: '.../VSC/chatbot/transformers_bot/model'"""
+model_tun=path_tun() 
 
 tokenizer=AutoTokenizer.from_pretrained(model_pre)
 tokenizer.pad_token=tokenizer.eos_token
@@ -71,7 +74,8 @@ tf_train_dataset=pad_sequences(encoded_dataset['train']['input_ids'], truncating
 eval_dataset=pad_sequences(encoded_dataset['validate']['input_ids'], truncating='post', maxlen=max_len)
 tf_eval_dataset=(eval_dataset, eval_labels)
 
-model.fit(tf_train_dataset, labels, validation_data=tf_eval_dataset, epochs=1)
+model.fit(tf_train_dataset, labels, validation_data=tf_eval_dataset, epochs=10)
+model.summary()
 model.save_pretrained(model_tun)
 eval_loss = model.evaluate(eval_dataset, eval_labels)
 
