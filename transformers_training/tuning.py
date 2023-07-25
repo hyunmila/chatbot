@@ -9,6 +9,7 @@ from transformers import AutoTokenizer, TFAutoModelForCausalLM, AdamWeightDecay
 from tensorflow.keras.preprocessing.sequence import pad_sequences # type: ignore
 from paths import path_pre, path_tun
 transformers.logging.set_verbosity_error()
+from colors import prsys
 
 """
 model used here: DialoGPT-medium
@@ -75,8 +76,8 @@ eval_dataset=pad_sequences(encoded_dataset['validate']['input_ids'], truncating=
 tf_eval_dataset=(eval_dataset, eval_labels)
 
 model.fit(tf_train_dataset, labels, validation_data=tf_eval_dataset, epochs=10)
-model.summary()
+# model.summary()
 model.save_pretrained(model_tun)
 eval_loss = model.evaluate(eval_dataset, eval_labels)
 
-print(f"Perplexity: {math.exp(eval_loss):.2f}")
+prsys(f"Perplexity: {math.exp(eval_loss):.2f}")

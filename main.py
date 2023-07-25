@@ -1,11 +1,14 @@
-from statistics import mode
-import statistics
 import transformers
 import tensorflow as tf
+from colors import prsys, prbot, insys
 from functools import partial
 from transformers import AutoTokenizer, TFAutoModelForCausalLM
+from classification import classification
+from classification_training.database import Database
 transformers.logging.set_verbosity_error()
 from transformers_training.paths import path_pre, path_tun
+import absl.logging
+absl.logging.set_verbosity(absl.logging.ERROR)
 
 """
 model used here: DialoGPT-medium
@@ -35,33 +38,37 @@ def generate(prompt, model, tokenizer, **kwargs):
         )
     return output_list
 
-tf.random.set_seed(50)
-print("\n\nCHATBOT LOADED\n")
-choices=[]
-algorithms={'0': "Greedy search",
-            '1': "Beam search",
-            '2': "Random sampling",
-            '3': "Top-k sampling",
-            '4': "Nucleus sampling"}
-while True:
-    inp=input("\nUser: ")
-    if inp.lower()=='exit':
-        try:
-            print("Best answers: ",algorithms[mode(choices)])
-        except (statistics.StatisticsError, KeyError):
+def main():
+    mode=1
+    loop_n=0
+    tf.random.set_seed(50)
+    print("\nCHATBOT\n")
+    Database().is_equal()
+    username_in = insys("Enter your username or 's' to skip: ")
+    if username_in.lower()=='s':
+        username_in='user'
+    name=classification(username_in,loop_n,mode)
+    prbot(f"Hello {name}, start texting, type 'exit' to stop.")
+    loop_n=1
+    # algorithms={'0': "Greedy search",
+    #             '1': "Beam search",
+    #             '2': "Random sampling",
+    #             '3': "Top-k sampling",
+    #             '4': "Nucleus sampling"}
+    while True:
+        # inp=input(f"{name}: ")
+        inp=classification(username_in,loop_n,mode)
+        if inp.lower()=='exit':
+            prsys("Quitting....")
             break
-        break
-    generator = partial(generate, model=model, tokenizer=tokenizer)
-    
-    # print("\n0: Bot: ",generator(inp)[0])
-    print("1: Bot: ",generator(inp, num_beams=10, early_stopping=True, num_return_sequences=5,no_repeat_ngram_size=2)[0])
-    print("2: Bot: ",generator(inp, do_sample=True, top_k=0, temperature=0.7)[0])
-    print("3: Bot: ",generator(inp, do_sample=True, top_k=50)[0])
-    # print("4: Bot: ",generator(inp, do_sample=True, top_k=0, top_p=0.9)[0])
-    choice=input("Which response fits your question best? [0,1,2,3,4]: ")
-    choices.append(choice)
+        generator = partial(generate, model=model, tokenizer=tokenizer)
+        # prbot("\n0: Bot: ",generator(inp)[0])
+        # prbot("1: Bot: ",generator(inp, num_beams=10, early_stopping=True, num_return_sequences=5,no_repeat_ngram_size=2)[0])
+        prbot(f"{generator(inp, do_sample=True, top_k=0, temperature=0.8)[0]}")
+        # prbot("3: Bot: ",generator(inp, do_sample=True, top_k=50)[0])
+        # prbot("4: Bot: ",generator(inp, do_sample=True, top_k=0, top_p=0.9)[0])
 
-
+main()
 
 """
 A bit about the model.generate function:

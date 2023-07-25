@@ -3,6 +3,7 @@ import shelve
 import numpy as np
 import shutil
 import json
+from colors import prsys, insys
 
 class User:
     def __init__(self, username):
@@ -27,10 +28,10 @@ class User:
         flag=False
         if self.is_new():
             flag=True
-            self.name=input("Enter your name or 's' to skip: ")
+            self.name=insys("Enter your name or 's' to skip: ")
             if self.name.lower()=='s':
                 self.name="User"+str(np.random.randint(100)) # hardcoded num
-                print("Name: ", self.name)
+                prsys(f"Name: {self.name}")
             self.usernames[self.username]=self.name
             source_dir='classification_training/database/user' 
             destination_dir=self.path
@@ -51,19 +52,18 @@ class User:
         return dictoflabels
 
     def change_name(self):
-        self.usernames[self.username]=input("Name: ")
+        self.usernames[self.username]=insys("Name: ")
         return self.usernames[self.username]
 
     def delete_from(self,todel):
         for elem in ([self.usernames, self.userdata, self.userdb]):
-            # print("Deleting: ", elem[todel])
             del elem[todel]
         shutil.rmtree('classification_training/database/'+str(todel))
 
     def del_name(self):
-        todel = input("Username: ")
+        todel = insys("Username: ")
         if (todel.lower()=='user' or todel not in list(self.usernames.keys())):
-            print("Can't delete that one!")
+            prsys("Can't delete that one!")
         elif todel==self.username:
             self.delete_from(todel)
             return 'user'
@@ -101,7 +101,7 @@ class Database:
                 if ((elem not in self.keys_list[0]) or
                     (elem not in self.keys_list[1]) or
                     (elem not in self.keys_list[2])):
-                    print("Deleting ",elem," from database")
+                    prsys(f"Deleting {elem} from database")
                     try:
                         shutil.rmtree('classification_training/database/'+str(elem))
                     except NotADirectoryError:
@@ -117,7 +117,7 @@ class Database:
                 if ((elem not in temp[0]) or
                     (elem not in temp[1]) or
                     (elem not in temp[2])):
-                    print("Deleting ",elem,":",userx_list[id][elem])
+                    prsys(f"Deleting {elem}:{userx_list[id][elem]}")
                     del (userx_list[id][elem])
                     lengths[id]=len(list((userx_list[id]).keys()))
         return lengths
@@ -126,7 +126,7 @@ class Database:
         lengths=self.list_len()
         is_not=(lengths[0]!=lengths[1] or lengths[0]!=lengths[2] or lengths[0]!=lengths[3]) # True if not equal
         while is_not:
-            yn=input("Database error, continue? [y/n]: ")
+            yn=insys("Database error, continue? [y/n]: ")
             if yn.lower()=='n':break
             count=lengths.count(max(lengths))
             id=lengths.index(max(lengths))
