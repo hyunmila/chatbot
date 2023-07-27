@@ -3,7 +3,7 @@ import numpy as np
 import pickle
 from tensorflow.keras import models # type: ignore
 from tensorflow.keras import preprocessing # type: ignore
-from colors import prbot, prsys, insys
+from colors import prbot, prsys
 
 def lessons_length(path):
     with open(str(path)+'/lessons.json') as read:
@@ -60,14 +60,11 @@ def chatbot(name,path,mode):
         res_index=np.argmax(res)
         tag = label_encoder.inverse_transform([np.argmax(res)])
         # if mode==1:print(res, len(res), res_index, tag[0], res[res_index])
-        if mode==1:prsys(f"Confidence: {res[res_index]}")
-        # is_answer=0
+        if mode==1:prsys(f"Confidence: {round((res[res_index])*100,2)}%")
         if res[res_index]>0.8: # TODO: calculate the threshold
             for i in data['lessons']:
                 if i['tag']==tag:
                     prbot(np.random.choice(i['responses']))
-                    # is_answer=1
-                    # return inp, is_answer
         else:
-            prbot("Give me a minute...")
+            prbot("Hmm...")
             return inp

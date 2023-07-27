@@ -9,7 +9,9 @@ from tensorflow.keras.preprocessing.text import Tokenizer # type: ignore
 from tensorflow.keras.preprocessing.sequence import pad_sequences # type: ignore
 from sklearn.preprocessing import LabelEncoder
 from keras import callbacks
-from colors import prsys, insys
+
+from colors import prsys
+# from colors import prsys
 
 
 def training(mode, num_epochs, path):
@@ -66,6 +68,7 @@ def training(mode, num_epochs, path):
 
 def start_training(mode, path, num):
     result=0
+    input(f"{num}: ")
     while num>=result:
         result, model, tokenizer, label_encoder=training(mode, num, path)
         if result!=num:

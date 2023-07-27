@@ -1,45 +1,22 @@
 from classification_training.training import start_training
 from classification_training.chatbot import chatbot
-from classification_training.database import User
-from colors import prsys, insys
+import shelve
 import absl.logging
 absl.logging.set_verbosity(absl.logging.ERROR)
 
 
-def classification(username_in, loop_n, mode):
-    username=User(username_in)
-    name,flag=username.name()
+def classification(username_in, mode, train, loop_n):
+    userdata=shelve.open("classification_training/database/userdata/userdata")
+    name=userdata[username_in][0]
+    epochs=userdata[username_in][1]
+    path='classification_training/database/'+str(username_in)
     if loop_n==0:
-        if username.username.lower()!='user':
-            if flag==False:
-                yn = insys("Do you want changes [y/n]: ")
-                while yn.lower()=='y':
-                    changes = insys("Change name: 'c', \nDelete user: 'd', \n's' to skip: ")
-                    if changes.lower()=='c':
-                        name=username.change_name()
-                    elif changes.lower()=='d':
-                        username_in=username.del_name()
-                    elif changes.lower() not in ['c', 'd', 's']:
-                        prsys("Invalid input")
-                    else: 
-                        break
-                    yn = insys("Do you want more changes [y/n]: ")
-                prsys(f"Logged as: {name}")
-        
         return name
-    epochs=username.userdata[username.username]
-    elem_count_old = username.lessons_length()
-    temp = elem_count_old
-    # if mode==1:prsys(f"lessons length: {temp}")
-    """train only if there are changes or its a new user"""
-    if (temp != elem_count_old):
-        epoch_upd=start_training(mode,username.path,epochs)
+    if train==1:
+        epoch_upd=start_training(mode,path,epochs)
         """update number of epochs to speed up the training"""
-        username.userdata[username.username]=epoch_upd
-        dictoflabels=username.dict_update()
-        username.userdb[username.username]=dictoflabels
-    else:dictoflabels=username.userdb[username.username]
-    inp=chatbot(name,username.path,mode)
-    elem_count_new = username.lessons_length()
-    temp=elem_count_new+1
+        userdata[username_in][1]=epoch_upd
+    inp=chatbot(name,path,mode)
     return inp
+
+# classification('user',1,0)

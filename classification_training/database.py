@@ -25,9 +25,9 @@ class User:
             return False
 
     def name(self):
-        flag=False
+        # flag=False
         if self.is_new():
-            flag=True
+            # flag=True
             self.name=insys("Enter your name or 's' to skip: ")
             if self.name.lower()=='s':
                 self.name="User"+str(np.random.randint(100)) # hardcoded num
@@ -41,7 +41,7 @@ class User:
             self.userdb[self.username]=dictoflabels
         else:
             self.name=self.usernames[self.username]
-        return self.name,flag
+        return self.name
 
     def dict_update(self):
         data=self.database()

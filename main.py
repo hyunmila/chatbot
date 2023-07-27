@@ -1,10 +1,11 @@
 import transformers
 import tensorflow as tf
-from colors import prsys, prbot, insys
+import time
+from colors import prsys, prbot
 from functools import partial
 from transformers import AutoTokenizer, TFAutoModelForCausalLM
 from classification import classification
-from classification_training.database import Database
+# from classification_training.database import Database
 transformers.logging.set_verbosity_error()
 from transformers_training.paths import path_pre, path_tun
 import absl.logging
@@ -24,6 +25,8 @@ tokenizer=AutoTokenizer.from_pretrained(model_pre)
 tokenizer.pad_token=tokenizer.eos_token
 model=TFAutoModelForCausalLM.from_pretrained(model_tun)
 
+def exec_time(s,e):
+    prsys(f"Took: {round((e-s),2)} s")
 
 def generate(prompt, model, tokenizer, **kwargs):
     input_ids = tokenizer.encode(prompt + tokenizer.eos_token, return_tensors="tf")
@@ -40,14 +43,12 @@ def generate(prompt, model, tokenizer, **kwargs):
 
 def main():
     mode=1
+    train=0
     loop_n=0
     tf.random.set_seed(50)
     print("\nCHATBOT\n")
-    Database().is_equal()
-    username_in = insys("Enter your username or 's' to skip: ")
-    if username_in.lower()=='s':
-        username_in='user'
-    name=classification(username_in,loop_n,mode)
+    username_in='user'
+    name=classification(username_in,mode,train,loop_n)
     prbot(f"Hello {name}, start texting, type 'exit' to stop.")
     loop_n=1
     # algorithms={'0': "Greedy search",
@@ -56,15 +57,17 @@ def main():
     #             '3': "Top-k sampling",
     #             '4': "Nucleus sampling"}
     while True:
-        # inp=input(f"{name}: ")
-        inp=classification(username_in,loop_n,mode)
+        inp=classification(username_in,mode,train,loop_n)
         if inp.lower()=='exit':
             prsys("Quitting....")
             break
+        s=time.time()
         generator = partial(generate, model=model, tokenizer=tokenizer)
         # prbot("\n0: Bot: ",generator(inp)[0])
         # prbot("1: Bot: ",generator(inp, num_beams=10, early_stopping=True, num_return_sequences=5,no_repeat_ngram_size=2)[0])
         prbot(f"{generator(inp, do_sample=True, top_k=0, temperature=0.8)[0]}")
+        e=time.time()
+        if mode==1:exec_time(s,e)
         # prbot("3: Bot: ",generator(inp, do_sample=True, top_k=50)[0])
         # prbot("4: Bot: ",generator(inp, do_sample=True, top_k=0, top_p=0.9)[0])
 
