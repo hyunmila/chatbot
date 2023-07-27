@@ -2,6 +2,6 @@ __pycache__/
 classification_training/__pycache__/
 *.ipynb
 test.py
-classification_training/database/
+# classification_training/database/
 transformers_training/model/
 paths.py
