@@ -15,7 +15,7 @@ def classification(username_in, mode, train, loop_n):
     if train==1:
         epoch_upd=start_training(mode,path,epochs)
         """update number of epochs to speed up the training"""
-        userdata[username_in][1]=epoch_upd
+        userdata[username_in]=(name, epoch_upd)
     inp=chatbot(name,path,mode)
     return inp
 

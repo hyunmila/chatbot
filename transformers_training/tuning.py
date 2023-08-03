@@ -7,7 +7,7 @@ import json
 import pandas as pd
 from transformers import AutoTokenizer, TFAutoModelForCausalLM, AdamWeightDecay
 from tensorflow.keras.preprocessing.sequence import pad_sequences # type: ignore
-from paths import path_pre, path_tun
+from transformers_training.paths import path_pre, path_tun
 transformers.logging.set_verbosity_error()
 from colors import prsys
 
@@ -74,7 +74,9 @@ eval_labels=np.array(tf.cast(lv, dtype=tf.int32))
 tf_train_dataset=pad_sequences(encoded_dataset['train']['input_ids'], truncating='post', maxlen=max_len)
 eval_dataset=pad_sequences(encoded_dataset['validate']['input_ids'], truncating='post', maxlen=max_len)
 tf_eval_dataset=(eval_dataset, eval_labels)
-
+# TODO:
+"""This is potentially not the best idea as arrays will need to be fully loaded into memory
+and it slows down training. Research on prepare_tf_dataset."""
 model.fit(tf_train_dataset, labels, validation_data=tf_eval_dataset, epochs=10)
 # model.summary()
 model.save_pretrained(model_tun)

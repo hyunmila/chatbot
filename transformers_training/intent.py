@@ -2,7 +2,7 @@ import transformers
 from transformers import AutoTokenizer, TFAutoModelForSequenceClassification
 import tensorflow as tf
 import numpy as np
-from paths import path_intent
+from transformers_training.paths import path_intent
 transformers.logging.set_verbosity_error()
 
 """
@@ -17,11 +17,10 @@ tokenizer = AutoTokenizer.from_pretrained(checkpoint)
 raw_inputs = [
     "I hate this so much!",
     "I love you!",
-    "I don't like apples."
+    "I eat apples."
 ]
 
 inputs = tokenizer(raw_inputs, padding=True, truncation=True, return_tensors="tf")
-
 model = TFAutoModelForSequenceClassification.from_pretrained(checkpoint)
 outputs = model(inputs)
 predictions = tf.math.softmax(outputs.logits, axis=-1)

@@ -4,4 +4,6 @@ classification_training/__pycache__/
 test.py
 # classification_training/database/
 transformers_training/model/
+transformers_training/model_test/
+transformers_training/data/
 paths.py

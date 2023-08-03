@@ -7,7 +7,7 @@ from transformers import AutoTokenizer, TFAutoModelForCausalLM
 from classification import classification
 # from classification_training.database import Database
 transformers.logging.set_verbosity_error()
-from transformers_training.paths import path_pre, path_tun
+from transformers_training.paths import path_pre, path_tun, path_tun_test
 import absl.logging
 absl.logging.set_verbosity(absl.logging.ERROR)
 
@@ -19,11 +19,13 @@ path to a dir with pretrained model; ex: '.../VSC/transformers/DialoGPT-medium'
 """
 model_pre=path_pre() 
 """path to a dir where fine-tuned model is saved; ex: '.../VSC/chatbot/transformers_training/model'"""
-model_tun=path_tun() 
+# model_tun=path_tun() 
+model_tun=path_tun_test()
 
 tokenizer=AutoTokenizer.from_pretrained(model_pre)
 tokenizer.pad_token=tokenizer.eos_token
 model=TFAutoModelForCausalLM.from_pretrained(model_tun)
+
 
 def exec_time(s,e):
     prsys(f"Took: {round((e-s),2)} s")
@@ -64,12 +66,12 @@ def main():
         s=time.time()
         generator = partial(generate, model=model, tokenizer=tokenizer)
         # prbot("\n0: Bot: ",generator(inp)[0])
-        # prbot("1: Bot: ",generator(inp, num_beams=10, early_stopping=True, num_return_sequences=5,no_repeat_ngram_size=2)[0])
-        prbot(f"{generator(inp, do_sample=True, top_k=0, temperature=0.8)[0]}")
+        prbot(f"{generator(inp, num_beams=10, early_stopping=True, num_return_sequences=5,no_repeat_ngram_size=2)[0]}")
+        prbot(f"{generator(inp, do_sample=True, top_k=0, temperature=0.8)[0]}") # this
+        prbot(f"{generator(inp, do_sample=True, top_k=50)[0]}")
+        prbot(f"{generator(inp, do_sample=True, top_k=0, top_p=0.9)[0]}")
         e=time.time()
         if mode==1:exec_time(s,e)
-        # prbot("3: Bot: ",generator(inp, do_sample=True, top_k=50)[0])
-        # prbot("4: Bot: ",generator(inp, do_sample=True, top_k=0, top_p=0.9)[0])
 
 main()
 

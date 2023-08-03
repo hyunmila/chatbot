@@ -68,7 +68,7 @@ def training(mode, num_epochs, path):
 
 def start_training(mode, path, num):
     result=0
-    input(f"{num}: ")
+    # input(f"{num}: ")
     while num>=result:
         result, model, tokenizer, label_encoder=training(mode, num, path)
         if result!=num:
