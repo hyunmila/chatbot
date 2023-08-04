@@ -1,0 +1,10 @@
+absl_py
+datasets
+inputimeout
+keras
+numpy
+pandas
+scikit_learn
+tensorflow
+tensorflow_intel
+transformers==4.30.2
